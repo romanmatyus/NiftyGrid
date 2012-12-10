@@ -445,6 +445,18 @@ abstract class Grid extends \Nette\Application\UI\Control
 	/**
 	 * @return bool
 	 */
+	public function hasSumRow()
+	{
+		foreach($this['columns']->components as $column){
+			if($column->sum)
+				return TRUE;
+		}
+		return FALSE;
+	}
+
+	/**
+	 * @return bool
+	 */
 	public function hasActionForm()
 	{
 		return count($this['actions']->components) ? TRUE : FALSE;

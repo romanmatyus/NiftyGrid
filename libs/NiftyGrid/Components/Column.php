@@ -59,6 +59,9 @@ class Column extends \Nette\Application\UI\PresenterComponent
 	/** @var Grid */
 	public $parent;
 
+	/** @var bool 	Add up the values ​​in column */
+	protected $sum = FALSE;
+
 	/**
 	 * @param Grid $parent
 	 */
@@ -120,6 +123,25 @@ class Column extends \Nette\Application\UI\PresenterComponent
 		$this->truncate = $truncate;
 
 		return $this;
+	}
+
+	/**
+	 * Add up the values ​​in column.
+	 * @return Column
+	 */
+	public function setSum()
+	{
+		$this->sum = TRUE;
+		return $this;
+	}
+
+	/**
+	 * Returns information about the counting of column values.
+	 * @return bool
+	 */
+	public function getSum()
+	{
+		return $this->sum;
 	}
 
 	/**
