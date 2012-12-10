@@ -354,6 +354,17 @@ class Column extends \Nette\Application\UI\PresenterComponent
 	/**
 	 * @return Column
 	 */
+	public function setDateRangeFilter()
+	{
+		$this->parent['gridForm'][$this->parent->name]['filter']->addText($this->name, $this->label.":")->getControlPrototype()->class("dateRange");
+		$this->filterType = FilterCondition::DATE_IN_RANGE;
+
+		return $this;
+	}
+
+	/**
+	 * @return Column
+	 */
 	public function setNumericFilter()
 	{
 		$this->parent['gridForm'][$this->parent->name]['filter']->addText($this->name, $this->label.":");

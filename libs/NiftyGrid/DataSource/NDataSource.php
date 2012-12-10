@@ -59,6 +59,19 @@ class NDataSource implements IDataSource
 					$column .= $filter["valueFunction"]."(?)";
 				}
 				$this->table->where($column, $value);
+			} elseif($filter["type"] == FilterCondition::WHEREARRAY){
+				$column = $filter["column"];
+				foreach($filter['array'] as $array) {
+					$value = $array["value"];
+					if(!empty($array["columnFunction"])){
+						$column = $array["columnFunction"]."(".$filter["column"].")";
+					}
+					$column .= $array["cond"];
+					if(!empty($array["valueFunction"])){
+						$column .= $array["valueFunction"]."(?)";
+					}
+					$this->table->where($column, $value);
+				}
 			}
 		}
 	}
