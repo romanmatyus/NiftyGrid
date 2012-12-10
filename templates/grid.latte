@@ -8,6 +8,7 @@
 * @link		http://addons.nette.org/cs/niftygrid
 */
 *}
+{pack "NiftyGrid"}
 {snippet}
 {if !$control->isSubGrid}
 {$control['gridForm']->render('begin')}
@@ -26,9 +27,9 @@
 						{/foreach}
 					</div>
 					<div class="grid-upper-info">
-						<a n:href="this" class="grid-current-link" title="Získat odkaz na tuto stránku"></a>
+						<a n:href="this" class="grid-current-link" title="Získať odkaz na túto stránku"></a>
 						<div class="grid-results">
-							celkem {$results} {($results == 1) ? "záznam" : (($results >= 2 && $results <= 4) ? "záznamy" : "záznamů")}{if $paginate} {if (boolean)$results}(Zobrazeno {$viewedFrom} až {$viewedTo}){/if}{/if}
+							spolu {$results} {($results == 1) ? "záznam" : (($results >= 2 && $results <= 4) ? "záznamy" : "záznamov")}{if $paginate} {if (boolean)$results}(Zobrazné položky {$viewedFrom} až {$viewedTo}){/if}{/if}
 						</div>
 					</div>
 				</div>
@@ -47,15 +48,15 @@
 			</th>
 		</tr>
 		<tr>
-			<th n:if="$control->hasActionForm()" style="text-align:center; width: 16px;" class="grid-head-column"><input type="checkbox" class="grid-select-all" title="Označit/odznačit všechny záznamy"></th>
+			<th n:if="$control->hasActionForm()" style="text-align:center; width: 16px;" class="grid-head-column"><input type="checkbox" class="grid-select-all" title="Označiť/odznačiť všetky záznamy"></th>
 			<th n:foreach="$subGrids as $subGrid" style="width: 26px;" class="grid-head-column"></th>
-			<th n:foreach="$columns as $column" n:attr="style => $column->width ? 'width: '.$column->width.';'" class="grid-head-column">{if $control->hasEnabledSorting() && $column->isSortable()}{var $order = ($control->order == $column->name.' ASC') ? " DESC" : " ASC"}<a n:href="this, 'order' => $column->name.$order" class="grid-ajax" title="Obrátit řazení">{$column->label}</a>{else}{$column->label}{/if}
+			<th n:foreach="$columns as $column" n:attr="style => $column->width ? 'width: '.$column->width.';'" class="grid-head-column">{if $control->hasEnabledSorting() && $column->isSortable()}{var $order = ($control->order == $column->name.' ASC') ? " DESC" : " ASC"}<a n:href="this, 'order' => $column->name.$order" class="grid-ajax" title="Obrátiť radenie">{$column->label}</a>{else}{$column->label}{/if}
 				<div class="grid-order" n:if="$column->isSortable() && $control->hasEnabledSorting()">
-					<a n:href="this, 'order' => $column->name.' ASC'" n:class="grid-ajax, grid-order-up ,($control->order && ($control->order == $column->name.' ASC')) ? grid-order-active-up" title="Řadit vzestupně"></a>
-					<a n:href="this, 'order' => $column->name.' DESC'" n:class="grid-ajax, grid-order-down ,($control->order && ($control->order == $column->name.' DESC')) ? grid-order-active-down" title="Řadit sestupně"></a>
+					<a n:href="this, 'order' => $column->name.' ASC'" n:class="grid-ajax, grid-order-up ,($control->order && ($control->order == $column->name.' ASC')) ? grid-order-active-up" title="Zoradiť vzotupne"></a>
+					<a n:href="this, 'order' => $column->name.' DESC'" n:class="grid-ajax, grid-order-down ,($control->order && ($control->order == $column->name.' DESC')) ? grid-order-active-down" title="Zoradiť zostupne"></a>
 				</div>
 			</th>
-			<th n:if="$control->hasButtons() || $control->hasFilterForm()" class="grid-head-column">Akce</th>
+			<th n:if="$control->hasButtons() || $control->hasFilterForm()" class="grid-head-column">Akcia</th>
 		</tr>
 		<tr n:if="$control->hasFilterForm()">
 			<th n:if="$control->hasActionForm()" class="grid-filter-form"></th>
@@ -65,7 +66,7 @@
 					{$control['gridForm'][$control->name]['filter'][$column->name]->getControl()}
 				{/if}
 			</th>
-			<th class="grid-filter-form">{$control['gridForm'][$control->name]['filter']['send']->getControl()}<a n:if="$control->hasActiveFilter()" n:href="this, filter => NULL, paginator-page => NULL" title="Zrušit filtr" class="grid-filter-reset grid-ajax"></a></th>
+			<th class="grid-filter-form">{$control['gridForm'][$control->name]['filter']['send']->getControl()}<a n:if="$control->hasActiveFilter()" n:href="this, filter => NULL, paginator-page => NULL" title="Zrušiť filter" class="grid-filter-reset grid-ajax"></a></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -79,7 +80,7 @@
 			</td>
 			<td class="grid-row-cell grid-edited-cell">
 				{$control['gridForm'][$control->name]['rowForm']['send']->getControl()}
-				<a class="grid-rowForm-cancel grid-ajax" n:href="this" title="Zrušit editaci"></a>
+				<a class="grid-rowForm-cancel grid-ajax" n:href="this" title="Zrušiť editáciu"></a>
 			</td>
 		</tr>
 		{if count($rows)}
@@ -94,12 +95,19 @@
 					{$control['gridForm'][$control->name]['rowForm'][$column->name]->getControl()}
 				{else}
 					{$column->prepareValue($row)}
+					{if $column->sum}
+							{if !isset(${$column->name.'Sum'})}
+								{var ${$column->name.'Sum'} = $column->prepareValue($row)}
+							{else}
+								{var ${$column->name.'Sum'} += $column->prepareValue($row)}
+							{/if}
+					{/if}
 				{/if}
 			</td>
 			<td n:if="$control->hasButtons() || $control->hasFilterForm()" n:attr="class => array(grid-row-cell, $control->isEditable() && $control->activeRowForm == $row[$primaryKey] ? 'grid-edited-cell')">
 				{if $control->activeRowForm == $row[$primaryKey] && $control->isEditable()}
 					{$control['gridForm'][$control->name]['rowForm']['send']->getControl()}
-					<a class="grid-rowForm-cancel grid-ajax" n:href="this" title="Zrušit editaci"></a>
+					<a class="grid-rowForm-cancel grid-ajax" n:href="this" title="Zrušiť editáciu"></a>
 					{$control['gridForm'][$control->name]['rowForm'][$primaryKey]->getControl()}
 				{else}
 					{foreach $buttons as $button}
@@ -119,6 +127,17 @@
 			<td class="grid-row-cell" style="background-color:#FFF; font-size:16px;" colspan="{$colsCount}">{$control->messageNoRecords}</td>
 		</tr>
 		{/if}
+
+		<tr n:if="$control->hasSumRow()" class="grid-sum-row">
+			<td n:if="$control->hasActionForm()" class="grid-row-cell grid-data-cell">Súčet</td>
+			<td n:foreach="$columns as $column" class="grid-row-cell grid-data-cell">
+				{if $column->sum}
+					{${$column->name.'Sum'}}
+				{/if}
+			</td>
+			<td n:if="$control->hasButtons() || $control->hasFilterForm()" class="grid-row-cell grid-data-cell"></td>
+		</tr>
+
 	</tbody>
 	<tfoot>
 		<tr>
@@ -145,5 +164,29 @@
 {if !$control->isSubGrid}
 {$control['gridForm']->render('end')}
 {/if}
+<script>
+var selector = '.dateRange';
+$(window.selector).DatePicker({
+	format:'d.m.Y',
+	date: new Date(),
+	mode: 'range',
+	calendars: 2,
+	onBeforeShow: function(){
+		//$(window.selector).DatePickerSetDate(new Date(), true);
+	},
+	onChange: function(formated){
+		$(window.selector).val(formated);
+	},
+	locale: {
+		days: ["Nedeľa", "Pondelok", "Utorok", "Streda", "Štvrtok", "Piatok", "Sobota", "Nedeľa"],
+		daysShort: ["Ned", "Pon", "Uto", "Str", "Štr", "Pia", "Sob", "Ned"],
+		daysMin: ["Ne", "Po", "Ut", "St", "Št", "Pi", "So", "Ne"],
+		months: ["Január", "Február", "Marec", "Apríl", "Máj", "Jún", "Júl", "August", "September", "Október", "November", "December"],
+		monthsShort: ["Jan", "Feb", "Mar", "Apr", "Máj", "Jún", "Júl", "Aug", "Sep", "Okt", "Nov", "Dec"],
+		weekMin: 'týž'
+	}
+
+});
+</script>
 {/snippet}
 
