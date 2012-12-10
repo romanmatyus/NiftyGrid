@@ -20,10 +20,12 @@ class FilterCondition extends \Nette\Object
 	const SELECT = "select";
 	const NUMERIC = "numeric";
 	const DATE = "date";
+	const DATERANGE = "daterange";
 	const BOOLEAN = "boolean";
 
 	/* condition types */
 	const WHERE = " WHERE ";
+	const WHEREARRAY = " WHEREARRAY ";
 
 	/* conditions names */
 	const CONTAINS = "contains";
@@ -35,6 +37,7 @@ class FilterCondition extends \Nette\Object
 	const LOWER = "lower";
 	const LOWEREQUAL = "lowerEqual";
 	const DIFFERENT = "different";
+	const RANGE = "range";
 
 	const DATE_EQUAL = "dateEqual";
 	const DATE_HIGHER = "dateHigher";
@@ -42,6 +45,7 @@ class FilterCondition extends \Nette\Object
 	const DATE_LOWER = "dateLower";
 	const DATE_LOWEREQUAL = "dateLowerEqual";
 	const DATE_DIFFERENT = "dateDifferent";
+	const DATE_IN_RANGE = "dateRange";
 
 	/**
 	 * @static
@@ -84,6 +88,10 @@ class FilterCondition extends \Nette\Object
 				self::HIGHER => ">",
 				self::LOWEREQUAL => "<=",
 				self::LOWER => "<",
+			);
+		elseif($type == self::DATE_RANGE)
+			return array(
+				self::DATE_IN_RANGE => "><",
 			);
 	}
 
@@ -143,6 +151,12 @@ class FilterCondition extends \Nette\Object
 			return array(
 				"condition" => self::EQUAL,
 				"value" => (int) $value
+			);
+		}
+		elseif($type == self::DATE_IN_RANGE){
+			return array(
+				"condition" => self::DATE_IN_RANGE,
+				"value" => $value
 			);
 		}
 	}
@@ -384,5 +398,47 @@ class FilterCondition extends \Nette\Object
 			"columnFunction" => "DATE",
 			"valueFunction" => "DATE"
 		);
+	}
+	
+	/**
+	 * @static
+	 * @param string $value
+	 * @return array
+	 */
+	public static function dateRange($value)
+	{
+		$values = explode(",",$value);
+		$date1 = new \DateTime(date('Ymd', strtotime(Strings::trim($values[0]))));
+		if(isset($values[1])) {
+			$date2 = new \DateTime(date('Ymd', strtotime(Strings::trim($values[1]))));
+			return array(
+				"type" => self::WHEREARRAY,
+				"array" => array(
+					array(
+						"datatype" => self::DATE,
+						"cond" => " >= ",
+						"value" => $date1,
+						"columnFunction" => "DATE",
+						"valueFunction" => "DATE"
+					),
+					array(
+						"datatype" => self::DATE,
+						"cond" => " <= ",
+						"value" => $date2,
+						"columnFunction" => "DATE",
+						"valueFunction" => "DATE"
+					)
+				)
+			);
+		} else {
+			return array(
+				"type" => self::WHERE,
+				"datatype" => self::DATE,
+				"cond" => " = ",
+				"value" => $date1,
+				"columnFunction" => "DATE",
+				"valueFunction" => "DATE"
+			);
+		}
 	}
 }
