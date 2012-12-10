@@ -34,7 +34,7 @@ abstract class Grid extends \Nette\Application\UI\Control
 	public $activeSubGridName;
 
 	/** @var array */
-	protected $perPageValues = array(20 => 20, 50 => 50, 100 => 100);
+	protected $perPageValues = array(20 => 20, 50 => 50, 100 => 100, 250 => 250, 500 => 500, 1000=>1000);
 
 	/** @var bool */
 	public $paginate = TRUE;
@@ -79,7 +79,7 @@ abstract class Grid extends \Nette\Application\UI\Control
 	protected $templatePath;
 
 	/** @var string */
-	public $messageNoRecords = 'Žádné záznamy';
+	public $messageNoRecords = 'Žiadne záznamy';
 
 	/** @var \Nette\Localization\ITranslator */
 	protected $translator;
@@ -578,7 +578,6 @@ abstract class Grid extends \Nette\Application\UI\Control
 
 				$type = $this['columns-'.$name]->getFilterType();
 				$filter = FilterCondition::prepareFilter($value, $type);
-
 				if(method_exists("\\NiftyGrid\\FilterCondition", $filter["condition"])){
 					$filter = call_user_func("\\NiftyGrid\\FilterCondition::".$filter["condition"], $filter["value"]);
 					if(!empty($this['gridForm'][$this->name]['filter'][$name])){
@@ -749,27 +748,27 @@ abstract class Grid extends \Nette\Application\UI\Control
 		$form->addContainer($this->name);
 
 		$form[$this->name]->addContainer("rowForm");
-		$form[$this->name]['rowForm']->addSubmit("send","Uložit");
+		$form[$this->name]['rowForm']->addSubmit("send","Uložiť");
 		$form[$this->name]['rowForm']['send']->getControlPrototype()->addClass("grid-editable");
 
 		$form[$this->name]->addContainer("filter");
-		$form[$this->name]['filter']->addSubmit("send","Filtrovat")
+		$form[$this->name]['filter']->addSubmit("send","Filtrovať")
 			->setValidationScope(FALSE);
 
 		$form[$this->name]->addContainer("action");
 		$form[$this->name]['action']->addSelect("action_name","Označené:");
-		$form[$this->name]['action']->addSubmit("send","Potvrdit")
+		$form[$this->name]['action']->addSubmit("send","Potvrdiť")
 			->setValidationScope(FALSE)
 			->getControlPrototype()
 			->addData("select", $form[$this->name]["action"]["action_name"]->getControl()->name);
 
 		$form[$this->name]->addContainer('perPage');
-		$form[$this->name]['perPage']->addSelect("perPage","Záznamů na stranu:", $this->perPageValues)
+		$form[$this->name]['perPage']->addSelect("perPage","Položiek na stranu:", $this->perPageValues)
 			->getControlPrototype()
 			->addClass("grid-changeperpage")
 			->addData("gridname", $this->getGridPath())
 			->addData("link", $this->link("changePerPage!"));
-		$form[$this->name]['perPage']->addSubmit("send","Ok")
+		$form[$this->name]['perPage']->addSubmit("send","OK")
 			->setValidationScope(FALSE)
 			->getControlPrototype()
 			->addClass("grid-perpagesubmit");
@@ -861,7 +860,7 @@ abstract class Grid extends \Nette\Application\UI\Control
 			}
 			$subGrid = ($gridName == $this->name) ? FALSE : TRUE;
 			if(!count($rows)){
-				throw new NoRowSelectedException("Nebyl vybrán žádný záznam.");
+				throw new NoRowSelectedException("Nebol vybraný žiadny záznam.");
 			}
 			if($subGrid){
 				call_user_func($this[$gridName]['actions']->components[$values['action_name']]->getCallback(), $rows);
@@ -872,9 +871,9 @@ abstract class Grid extends \Nette\Application\UI\Control
 		}
 		catch(NoRowSelectedException $e){
 			if($subGrid){
-				$this[$gridName]->flashMessage("Nebyl vybrán žádný záznam.","grid-error");
+				$this[$gridName]->flashMessage("Nebol vybraný žiadny záznam.","grid-error");
 			}else{
-				$this->flashMessage("Nebyl vybrán žádný záznam.","grid-error");
+				$this->flashMessage("Nebol vybraný žiadny záznam.","grid-error");
 			}
 			$this->redirect("this");
 		}
