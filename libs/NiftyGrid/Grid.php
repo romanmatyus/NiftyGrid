@@ -84,6 +84,9 @@ abstract class Grid extends \Nette\Application\UI\Control
 	/** @var \Nette\Localization\ITranslator */
 	protected $translator;
 
+	/** @var bool */
+	protected $lineNumber = FALSE;
+
 	/**
 	 * @param \Nette\Application\UI\Presenter $presenter
 	 */
@@ -355,6 +358,7 @@ abstract class Grid extends \Nette\Application\UI\Control
 		$count = count($this['columns']->components);
 		if ($this->hasActionForm()) $count++;
 		if ($this->hasButtons() || $this->hasFilterForm()) $count++;
+		if ($this->hasLineNumber) $count++;
 		$count += count($this['subGrids']->components);
 
 		return $count;
@@ -383,6 +387,20 @@ abstract class Grid extends \Nette\Application\UI\Control
 	public function setWidth($width)
 	{
 		$this->width = $width;
+	}
+
+	public function addLineNumber()
+	{
+		$this->lineNumber = TRUE;
+	}
+
+	/**
+	 * Get information abut line numbering.
+	 * @return bool
+	 */
+	public function hasLineNumber()
+	{
+		return $this->lineNumber;
 	}
 
 	/**
